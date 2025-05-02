@@ -9,3 +9,7 @@
 6) Обираєте шлях розташування файлів VoiceAttack 2\Sounds та натискаєте завантажити.
 7) Запускаєте VoiceAttack і імпортуєте профіль з папки \Star Citizen VoicePack by Shepard\VoiceAttackProfile
 8) Насолоджуєтесь :)
+
+Відеоінструкція із налаштувань програми VoiceAttac
+
+https://youtu.be/s0DD6AypehM
