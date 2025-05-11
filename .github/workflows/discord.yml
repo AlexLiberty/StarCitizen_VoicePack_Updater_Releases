@@ -7,21 +7,20 @@ on:
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
-    env:
-      RELEASE_NAME: ${{ github.event.release.name }}
-      RELEASE_BODY: ${{ github.event.release.body }}
-      RELEASE_URL: ${{ github.event.release.html_url }}
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     steps:
       - name: Send Release Info to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          JSON_PAYLOAD=$(cat <<EOF
-{
-  "content": ":loudspeaker: Новий реліз на GitHub!\nНазва: $RELEASE_NAME\nОпис: $RELEASE_BODY\nПереглянути: $RELEASE_URL"
-}
-EOF
-)
+          RELEASE_NAME=$(jq -r .release.name "$GITHUB_EVENT_PATH")
+          RELEASE_BODY=$(jq -r .release.body "$GITHUB_EVENT_PATH")
+          RELEASE_URL=$(jq -r .release.html_url "$GITHUB_EVENT_PATH")
+
+          jq -n --arg name "$RELEASE_NAME" \
+                --arg body "$RELEASE_BODY" \
+                --arg url "$RELEASE_URL" \
+                '{content: "📢 Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\nПереглянути: \($url)"}' > payload.json
 
           curl -X POST -H "Content-Type: application/json" \
-            -d "$JSON_PAYLOAD" \
+            -d @payload.json \
             "$DISCORD_WEBHOOK"
