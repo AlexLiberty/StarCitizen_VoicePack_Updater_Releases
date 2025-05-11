@@ -11,11 +11,18 @@ jobs:
       - name: Send Release Info to Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
         run: |
+          echo "Sending release notification to Discord..."
+          PAYLOAD=$(jq -n \
+            --arg name "$RELEASE_NAME" \
+            --arg body "$RELEASE_BODY" \
+            --arg url "$RELEASE_URL" \
+            '{content: "🚀 Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\n🔗 Переглянути: \($url)"}')
+          
           curl -X POST -H "Content-Type: application/json" \
-          -d "$(jq -n --arg name "${{ github.event.release.name }}" \
-                       --arg body "${{ github.event.release.body }}" \
-                       --arg url "${{ github.event.release.html_url }}" \
-                       '{ "content": "Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\nПереглянути реліз: \($url)" }')" \
-          "$DISCORD_WEBHOOK"
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
 
