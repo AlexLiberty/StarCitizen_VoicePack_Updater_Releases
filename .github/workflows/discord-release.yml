@@ -12,16 +12,23 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{
-                    \"username\": \"Release Bot\",
-                    \"avatar_url\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\",
-                    \"embeds\": [{
-                      \"title\": \"🚀 New Release: ${{ github.event.release.name }}\",
-                      \"description\": \"${{ github.event.release.body }}\",
-                      \"url\": \"${{ github.event.release.html_url }}\",
-                      \"color\": 5814783
-                    }]
-                  }" \
-               $DISCORD_WEBHOOK
+          PAYLOAD=$(jq -n \
+            --arg username "Release Bot" \
+            --arg avatar_url "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" \
+            --arg title "🚀 New Release: ${{ github.event.release.name }}" \
+            --arg description "${{ github.event.release.body }}" \
+            --arg url "${{ github.event.release.html_url }}" \
+            --argjson color 5814783 \
+            '{
+              username: $username,
+              avatar_url: $avatar_url,
+              embeds: [{
+                title: $title,
+                description: $description,
+                url: $url,
+                color: $color
+              }]
+            }')
+          
+          curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$DISCORD_WEBHOOK"
+
