@@ -16,6 +16,6 @@ jobs:
           -d "$(jq -n --arg name "${{ github.event.release.name }}" \
                        --arg body "${{ github.event.release.body }}" \
                        --arg url "${{ github.event.release.html_url }}" \
-                       '{content: "Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\nПереглянути реліз: \($url)"}')" \
+                       '{ "content": "Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\nПереглянути реліз: \($url)" }')" \
           "$DISCORD_WEBHOOK"
 
