@@ -1,0 +1,20 @@
+name: Notify Discord on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        uses: tsickert/discord-webhook@v5
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |
+            📢 **Новий реліз Star Citizen VoicePack!**
+            🔖 Версія: ${{ github.event.release.tag_name }}
+            📝 Назва: ${{ github.event.release.name }}
+            📄 Опис: ${{ github.event.release.body }}
+            🔗 [Перейти до релізу](${{ github.event.release.html_url }})
