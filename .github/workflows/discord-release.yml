@@ -1,34 +1,17 @@
-name: Discord Release Notification
+name: Notify Discord on Release
 
 on:
   release:
     types: [published]
 
 jobs:
-  notify:
+  notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Send message to Discord
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Send Release Info to Discord
         run: |
-          PAYLOAD=$(jq -n \
-            --arg username "Release Bot" \
-            --arg avatar_url "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" \
-            --arg title "🚀 New Release: ${{ github.event.release.name }}" \
-            --arg description "${{ github.event.release.body }}" \
-            --arg url "${{ github.event.release.html_url }}" \
-            --argjson color 5814783 \
-            '{
-              username: $username,
-              avatar_url: $avatar_url,
-              embeds: [{
-                title: $title,
-                description: $description,
-                url: $url,
-                color: $color
-              }]
-            }')
-          
-          curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$DISCORD_WEBHOOK"
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "Новий реліз на GitHub! \n Назва: '${{ github.event.release.name }}' \n Опис: '${{ github.event.release.body }}' \n [Переглянути реліз]('${{ github.event.release.html_url }}')"}' \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
 
