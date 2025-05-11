@@ -12,18 +12,19 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          sanitized_description=$(echo "${{ github.event.release.body }}" | jq -Rsa .)
-          payload=$(cat <<EOF
-{
-  "username": "Release Bot",
-  "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-  "embeds": [{
-    "title": "🚀 New Release: ${{ github.event.release.name }}",
-    "description": $sanitized_description,
-    "url": "${{ github.event.release.html_url }}",
-    "color": 5814783
-  }]
-}
-EOF
-)
-          curl -H "Content-Type: application/json" -X POST -d "$payload" "$DISCORD_WEBHOOK"
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d @- $DISCORD_WEBHOOK <<EOF
+          {
+            "username": "Release Bot",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [
+              {
+                "title": "🚀 Новий реліз: ${GITHUB_REF_NAME}",
+                "description": "${{ github.event.release.body }}",
+                "url": "${{ github.event.release.html_url }}",
+                "color": 5814783
+              }
+            ]
+          }
+          EOF
