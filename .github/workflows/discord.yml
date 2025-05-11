@@ -15,13 +15,8 @@ jobs:
           RELEASE_BODY: ${{ github.event.release.body }}
           RELEASE_URL: ${{ github.event.release.html_url }}
         run: |
-          echo "Preparing Discord payload..."
-          PAYLOAD=$(echo '{}' | jq --arg name "$RELEASE_NAME" \
-                                   --arg body "$RELEASE_BODY" \
-                                   --arg url "$RELEASE_URL" \
-                                   '.content = "🚀 Новий реліз на GitHub!\nНазва: \($name)\nОпис: \($body)\n🔗 Переглянути: \($url)"')
-
           echo "Sending to Discord..."
           curl -X POST -H "Content-Type: application/json" \
-               -d "$PAYLOAD" \
-               "$DISCORD_WEBHOOK"
+          -d "{\"content\": \"🚀 Новий реліз на GitHub!\nНазва: $RELEASE_NAME\nОпис: $RELEASE_BODY\n🔗 Переглянути: $RELEASE_URL\"}" \
+          "$DISCORD_WEBHOOK"
+
