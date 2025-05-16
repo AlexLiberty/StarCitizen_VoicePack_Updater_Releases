@@ -1,4 +1,5 @@
-StarCitizen_VoicePack_Updater - програма для завантаження та оновлення україномовного голосового пакету "Ліа" для Star Citizen.
+![](https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Updater_Releases/refs/heads/main/assets/IMG_7075.jpeg)
+ StarCitizen_VoicePack_Updater - програма для завантаження та оновлення україномовного голосового пакету "Ліа" для Star Citizen.
 
 1) Увага! Для роботи мовного пакету необхідна програма VoiceAttack.
 2) Можна придбати:
