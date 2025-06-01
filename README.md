@@ -1,4 +1,6 @@
 ![](https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Updater_Releases/refs/heads/main/assets/IMG_7075.jpeg)
+
+
 Ласкаво просимо до StarCitizen VoicePack Updater!
 Вас вітає офіційна програма для завантаження та оновлення україномовного голосового пакету "Ліа" для гри Star Citizen.
 
