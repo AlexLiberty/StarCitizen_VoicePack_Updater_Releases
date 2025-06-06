@@ -1,4 +1,4 @@
-name: Notify Discord on Release
+name: Notify Discord on ReleaseMore actions
 
 on:
   release:
@@ -15,6 +15,7 @@ jobs:
           RELEASE_BODY: ${{ github.event.release.body }}
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
+
         run: |
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
@@ -26,4 +27,5 @@ jobs:
 
           curl -X POST -H "Content-Type: application/json" \
             -d "$EMBED" \
-            "$DISCORD_WEBHOOK"
+            "$DISCORD_WEBHOOK"More actions
+
