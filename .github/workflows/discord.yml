@@ -22,7 +22,8 @@ jobs:
             --arg description "$RELEASE_BODY" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
-            --argjson color 5814783 \
+            --arg image "$IMAGE_URL" \
+            --argjson color 5814783 \            
             '{embeds: [{title: $title, description: ($version + "\n\n" + $description), url: $url, color: $color, image: {url: $image}}]}' )
 
           curl -X POST -H "Content-Type: application/json" \
