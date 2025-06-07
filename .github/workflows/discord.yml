@@ -15,7 +15,6 @@ jobs:
           RELEASE_BODY: ${{ github.event.release.body }}
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-          IMAGE_URL: https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Updater_Releases/main/assets/IMG_7075.jpeg
         run: |
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
@@ -27,9 +26,9 @@ jobs:
             '{embeds: [{
               title: $title,
               url: $url,
+              image: { url: $image },
               description: ($version + "\n\n" + $description),              
-              color: $color,
-              image: { url: $image }
+              color: $color              
             }]}' )
 
           curl -X POST -H "Content-Type: application/json" \
