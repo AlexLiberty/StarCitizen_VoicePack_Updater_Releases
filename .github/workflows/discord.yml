@@ -29,8 +29,7 @@ jobs:
               description: ($version + "\n\n" + $description),
               url: $url,
               color: $color,
-               "image": { "url": "https://raw.githubusercontent.com/AlexLiberty/StarCitizen_VoicePack_Updater_Releases/main/assets/IMG_7075.jpeg"
-               }
+              image: { url: $image }
             }]}' )
 
           curl -X POST -H "Content-Type: application/json" \
