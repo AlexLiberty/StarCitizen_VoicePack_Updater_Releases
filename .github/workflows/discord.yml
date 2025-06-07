@@ -18,19 +18,11 @@ jobs:
         run: |
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
+            --arg description "$RELEASE_BODY" \
             --arg url "$RELEASE_URL" \
-            --arg description "$RELEASE_BODY" \            
             --arg version "Версія: $RELEASE_TAG" \
-            --arg image "$IMAGE_URL" \
             --argjson color 5814783 \
-            '{embeds: [{
-              title: $title,
-              url: $url,
-              image: { url: $image },
-              description: ($version + "\n\n" + $description),              
-              color: $color              
-            }]}' )
-
+            '{embeds: [{title: $title, description: ($version + "\n\n" + $description), url: $url, color: $color}]}' )
           curl -X POST -H "Content-Type: application/json" \
             -d "$EMBED" \
             "$DISCORD_WEBHOOK"
