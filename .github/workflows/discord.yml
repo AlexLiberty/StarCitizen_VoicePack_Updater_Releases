@@ -16,13 +16,35 @@ jobs:
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
+          # Витягуємо перше посилання на картинку з Markdown у описі релізу
+          IMAGE_URL=$(echo "$RELEASE_BODY" | grep -oP '!\[.*?\]\(\K.*?(?=\))' | head -n 1)
+          
+          # Якщо картинка не знайдена, можна підставити дефолт (або залишити пустим)
+          if [ -z "$IMAGE_URL" ]; then
+            IMAGE_URL=""
+          fi
+          
           EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
             --arg description "$RELEASE_BODY" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
+            --arg image "$IMAGE_URL" \
             --argjson color 5814783 \
-            '{embeds: [{title: $title, description: ($version + "\n\n" + $description), url: $url, color: $color}]}' )
+            '{
+              embeds: [{
+                title: $title,
+                description: ($version + "\n\n" + $description),
+                url: $url,
+                color: $color
+              }]
+            }')
+
+          # Якщо IMAGE_URL заданий, додаємо поле image в embed
+          if [ -n "$IMAGE_URL" ]; then
+            EMBED=$(echo "$EMBED" | jq --arg image "$IMAGE_URL" '.embeds[0].image = { url: $image }')
+          fi
+          
           curl -X POST -H "Content-Type: application/json" \
             -d "$EMBED" \
             "$DISCORD_WEBHOOK"
