@@ -26,10 +26,10 @@ jobs:
             --argjson color 5814783 \
             '{embeds: [{
               title: $title,
+              image: { url: $image },
               description: ($version + "\n\n" + $description),
               url: $url,
-              color: $color,
-              image: { url: $image }
+              color: $color              
             }]}' )
 
           curl -X POST -H "Content-Type: application/json" \
