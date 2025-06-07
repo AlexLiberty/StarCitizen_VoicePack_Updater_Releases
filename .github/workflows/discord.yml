@@ -16,20 +16,24 @@ jobs:
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          # Витягуємо перше зображення з Markdown (формат ![alt](url))
+          # Витягуємо перше посилання на картинку з Markdown у тілі релізу
           IMAGE_URL=$(echo "$RELEASE_BODY" | grep -oP '!\[.*?\]\(\K.*?(?=\))' | head -n 1)
 
-          # Очищаємо тіло від всіх Markdown-зображень
+          # Видаляємо всі Markdown картинки, щоб не дублювались
           CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" | sed -E 's/!\[.*?\]\(.*?\)//g')
 
-          # Формуємо опис: заголовок, версія, зображення (якщо є), потім опис
+          # Формуємо заголовок і версію
+          HEADER="🚀 Новий реліз: $RELEASE_NAME\nВерсія: $RELEASE_TAG"
+
+          # Якщо є картинка, вставляємо її Markdown під заголовком
           if [ -n "$IMAGE_URL" ]; then
-            FULL_DESCRIPTION="🚀 Новий реліз: $RELEASE_NAME\nВерсія: $RELEASE_TAG\n\n![image]($IMAGE_URL)\n\n$CLEAN_DESCRIPTION"
-          else
-            FULL_DESCRIPTION="🚀 Новий реліз: $RELEASE_NAME\nВерсія: $RELEASE_TAG\n\n$CLEAN_DESCRIPTION"
+            HEADER="$HEADER\n\n![image]($IMAGE_URL)"
           fi
 
-          # Створюємо JSON payload
+          # Об'єднуємо заголовок + картинку + опис
+          FULL_DESCRIPTION="$HEADER\n\n$CLEAN_DESCRIPTION"
+
+          # Формуємо JSON embed
           EMBED=$(jq -n \
             --arg description "$FULL_DESCRIPTION" \
             --arg url "$RELEASE_URL" \
@@ -38,9 +42,9 @@ jobs:
               description: $description,
               url: $url,
               color: $color
-            }]}' )
+            }]}')
 
-          # Відправляємо до Discord
+          # Відправляємо запит до Discord
           curl -X POST -H "Content-Type: application/json" \
             -d "$EMBED" \
             "$DISCORD_WEBHOOK"
