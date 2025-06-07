@@ -16,32 +16,13 @@ jobs:
           RELEASE_URL: ${{ github.event.release.html_url }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          IMAGE_URL=$(echo "$RELEASE_BODY" | grep -oP '!\[.*?\]\(\K.*?(?=\))' | head -n 1)
-          CLEAN_DESCRIPTION=$(echo "$RELEASE_BODY" | sed -E 's/!\[.*?\]\(.*?\)//g')
-
-          # Перший embed — тільки зображення (як шапка)
-          if [ -n "$IMAGE_URL" ]; then
-            IMAGE_EMBED=$(jq -n --arg image "$IMAGE_URL" '{image: { url: $image }}')
-          else
-            IMAGE_EMBED=""
-          fi
-
-          # Основний embed з описом
-          MAIN_EMBED=$(jq -n \
+          EMBED=$(jq -n \
             --arg title "🚀 Новий реліз: $RELEASE_NAME" \
-            --arg description "$CLEAN_DESCRIPTION" \
+            --arg description "$RELEASE_BODY" \
             --arg url "$RELEASE_URL" \
             --arg version "Версія: $RELEASE_TAG" \
             --argjson color 5814783 \
-            '{title: $title, description: ($version + "\n\n" + $description), url: $url, color: $color}')
-
-          # Комбінуємо EMBED-и
-          if [ -n "$IMAGE_URL" ]; then
-            FINAL_JSON=$(jq -n --argjson a "$IMAGE_EMBED" --argjson b "$MAIN_EMBED" '{embeds: [$a, $b]}')
-          else
-            FINAL_JSON=$(jq -n --argjson b "$MAIN_EMBED" '{embeds: [$b]}')
-          fi
-
+            '{embeds: [{title: $title, description: ($version + "\n\n" + $description), url: $url, color: $color}]}' )
           curl -X POST -H "Content-Type: application/json" \
-            -d "$FINAL_JSON" \
+            -d "$EMBED" \
             "$DISCORD_WEBHOOK"
