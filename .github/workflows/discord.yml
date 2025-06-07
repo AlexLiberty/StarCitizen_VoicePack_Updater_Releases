@@ -29,7 +29,6 @@ jobs:
               description: ($version + "\n\n" + $description),
               url: $url,
               color: $color,
-             thumbnail: { url: $image },
              image: { url: $image }
             }]}' )
 
